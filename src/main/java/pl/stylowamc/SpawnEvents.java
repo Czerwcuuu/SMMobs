@@ -3,29 +3,23 @@ package pl.stylowamc;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Merchant;
-import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 public class SpawnEvents implements Listener {
 
@@ -98,6 +92,7 @@ public class SpawnEvents implements Listener {
             if (recipe.getResult().getType().equals(Material.ENCHANTED_BOOK)) {
                 EnchantmentStorageMeta meta = (EnchantmentStorageMeta) recipe.getResult().getItemMeta();
 
+                assert meta != null;
                 if (meta.hasStoredEnchant(Enchantment.MENDING)) {
                     recipeIterator.remove();
                 }
@@ -113,13 +108,17 @@ public class SpawnEvents implements Listener {
 
     @EventHandler
     public void FishingReplacement(PlayerFishEvent e){
-        Item item = (Item) e.getCaught();
-        ItemStack itemStack = item.getItemStack();
+        if(e.getCaught() != null) {
+            Item item = (Item) e.getCaught();
 
-        if(itemStack.getType().equals(Material.ENCHANTED_BOOK)){
-            EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
-            if(meta.hasStoredEnchant(Enchantment.MENDING)){
-                item.remove();
+            ItemStack itemStack = item.getItemStack();
+
+            if (itemStack.getType().equals(Material.ENCHANTED_BOOK)) {
+                EnchantmentStorageMeta meta = (EnchantmentStorageMeta) itemStack.getItemMeta();
+                assert meta != null;
+                if (meta.hasStoredEnchant(Enchantment.MENDING)) {
+                    item.remove();
+                }
             }
         }
     }
